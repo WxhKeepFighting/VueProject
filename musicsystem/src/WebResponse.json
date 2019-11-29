@@ -1,0 +1,28 @@
+[
+    {
+        "codes": [
+            "Min.music.id",
+            "Min.id",
+            "Min.int",
+            "Min"
+        ],
+        "arguments": [
+            {
+                "codes": [
+                    "music.id",
+                    "id"
+                ],
+                "arguments": null,
+                "defaultMessage": "id",
+                "code": "id"
+            },
+            1
+        ],
+        "defaultMessage": "最小不能小于1",
+        "objectName": "music",
+        "field": "id",
+        "rejectedValue": 0,
+        "bindingFailure": false,
+        "code": "Min"
+    }
+]
