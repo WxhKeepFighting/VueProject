@@ -8,7 +8,9 @@
 export default {
   name: "Login",
   created() {},
-  data() {}
+  data() {
+      return{}
+  }
 };
 </script>
 

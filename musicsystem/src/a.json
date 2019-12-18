@@ -1,0 +1,7 @@
+{
+    "timestamp": "2019-12-13T03:40:14.595+0000",
+    "status": 500,
+    "error": "Internal Server Error",
+    "message": "Validation failed for classes [com.wxh.musicsystem.domain.Music] during persist time for groups [javax.validation.groups.Default, ]\nList of constraint violations:[\n\tConstraintViolationImpl{interpolatedMessage='个数必须在5和30之间', propertyPath=comment, rootBeanClass=class com.wxh.musicsystem.domain.Music, messageTemplate='{javax.validation.constraints.Size.message}'}\n]",
+    "path": "/musics"
+}

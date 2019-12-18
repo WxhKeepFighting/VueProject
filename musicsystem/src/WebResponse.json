@@ -1,28 +1,59 @@
-[
-    {
-        "codes": [
-            "Min.music.id",
-            "Min.id",
-            "Min.int",
-            "Min"
-        ],
-        "arguments": [
-            {
-                "codes": [
-                    "music.id",
-                    "id"
-                ],
-                "arguments": null,
-                "defaultMessage": "id",
-                "code": "id"
-            },
-            1
-        ],
-        "defaultMessage": "最小不能小于1",
-        "objectName": "music",
-        "field": "id",
-        "rejectedValue": 0,
-        "bindingFailure": false,
-        "code": "Min"
-    }
-]
+{
+    "timestamp": "2019-12-11T06:25:36.046+0000",
+    "status": 400,
+    "error": "Bad Request",
+    "errors": [
+        {
+            "codes": [
+                "typeMismatch.music.release_date",
+                "typeMismatch.release_date",
+                "typeMismatch.java.sql.Date",
+                "typeMismatch"
+            ],
+            "arguments": [
+                {
+                    "codes": [
+                        "music.release_date",
+                        "release_date"
+                    ],
+                    "arguments": null,
+                    "defaultMessage": "release_date",
+                    "code": "release_date"
+                }
+            ],
+            "defaultMessage": "Failed to convert property value of type 'java.lang.String' to required type 'java.sql.Date' for property 'release_date'; nested exception is org.springframework.core.convert.ConversionFailedException: Failed to convert from type [java.lang.String] to type [@javax.validation.constraints.NotNull @org.springframework.format.annotation.DateTimeFormat java.sql.Date] for value ''; nested exception is java.lang.IllegalArgumentException",
+            "objectName": "music",
+            "field": "release_date",
+            "rejectedValue": "",
+            "bindingFailure": true,
+            "code": "typeMismatch"
+        },
+        {
+            "codes": [
+                "typeMismatch.music.status",
+                "typeMismatch.status",
+                "typeMismatch.boolean",
+                "typeMismatch"
+            ],
+            "arguments": [
+                {
+                    "codes": [
+                        "music.status",
+                        "status"
+                    ],
+                    "arguments": null,
+                    "defaultMessage": "status",
+                    "code": "status"
+                }
+            ],
+            "defaultMessage": "Failed to convert property value of type 'java.lang.String' to required type 'boolean' for property 'status'; nested exception is java.lang.IllegalArgumentException: Invalid boolean value []",
+            "objectName": "music",
+            "field": "status",
+            "rejectedValue": "",
+            "bindingFailure": true,
+            "code": "typeMismatch"
+        }
+    ],
+    "message": "Validation failed for object='music'. Error count: 2",
+    "path": "/musics"
+}

@@ -19,23 +19,23 @@
           </thead>
           <tbody>
             <!-- v-bind 根据id变化来更新 -->
-            <tr v-for="music in musicList" :key="music" v-bind="music.id">
+            <tr v-for="music in musicList" :key="music.id" >
               <td>
-                <input type="checkbox" :value="music.id" id="a" v-model="music.status" @change="method1(music)" />
-                <label for="a">{{check}}</label>
+                <input type="checkbox" :value="music.id" v-model="check" />
+                <label>{{check}}</label>
               </td>
               <td>{{music.id}}</td>
-              <td>{{music.musicname}}</td>
-              <td>{{music.musicauthor}}</td>
+              <td>{{music.name}}</td>
+              <td>{{music.author}}</td>
               <td>{{music.status}}</td>
-              <td>{{music.release_date}}</td>
+              <td>{{music.date}}</td>
               <td>
                 <a :href="'http://localhost:8080/musics/attachment/'+music.id">{{music.file}}</a>
               </td>
               <td>{{music.comment}}</td>
               <td>
                 <button
-                  @click="setEditForm(music.id,music.musicname,music.musicauthor, music.status, music.release_date, music.comment)"
+                  @click="setEditForm(music.id,music.name,music.author, music.status, music.date, music.comment)"
                   class="btn btn-info mr-4"
                 >更新</button>
                 <button @click="remove(music.id)" class="btn btn-danger">删除</button>
@@ -78,15 +78,15 @@
               type="text"
               id="name"
               placeholder="请输入歌曲名称"
-              v-model="mymusic.musicname"
+              v-model="mymusic.name"
             />
           </div>
           <div
             class="alert alert-danger col-sm-4"
             role="alert"
             style="padding: 6px 0 0 10px; margin: 0;"
-            v-if="errors.musicname != ''"
-          >{{errors.musicname}}</div>
+            v-if="errors.name != ''"
+          >{{errors.name}}</div>
         </div>
         <div class="form-group row">
           <label for="author" class="col-sm-1 col-form-label">
@@ -98,7 +98,7 @@
               class="form-control"
               id="author"
               placeholder="请输入歌曲作者"
-              v-model="mymusic.musicauthor"
+              v-model="mymusic.author"
               required
             />
           </div>
@@ -106,8 +106,8 @@
             class="alert alert-danger col-sm-4"
             role="alert"
             style="padding: 6px 0 0 10px; margin: 0;"
-            v-if="errors.musicauthor != ''"
-          >{{errors.musicauthor}}</div>
+            v-if="errors.author != ''"
+          >{{errors.author}}</div>
         </div>
 
         <div class="form-group row">
@@ -145,14 +145,14 @@
             <span style="color: red">*</span>日期:
           </label>
           <div class="col-sm-7">
-            <input type="date" class="form-control" id="date" v-model="mymusic.release_date" />
+            <input type="date" class="form-control" id="date" v-model="mymusic.date" />
           </div>
           <div
             class="alert alert-danger col-sm-4"
             role="alert"
             style="padding: 6px 0 0 10px; margin: 0;"
-            v-if="errors.release_date != ''"
-          >{{errors.release_date}}</div>
+            v-if="errors.date != ''"
+          >{{errors.date}}</div>
         </div>
 
         <div class="form-group row">
@@ -208,7 +208,7 @@
               type="text"
               id="name"
               placeholder="请输入歌曲名称"
-              v-model="mymusic.musicname"
+              v-model="mymusic.name"
             />
           </div>
         </div>
@@ -222,7 +222,7 @@
               class="form-control"
               id="author"
               placeholder="请输入歌曲作者"
-              v-model="mymusic.musicauthor"
+              v-model="mymusic.author"
               required
             />
           </div>
@@ -257,7 +257,7 @@
             <span style="color: red">*</span>日期:
           </label>
           <div class="col-sm-7">
-            <input type="date" class="form-control" id="date" v-model="mymusic.release_date" />
+            <input type="date" class="form-control" id="date" v-model="mymusic.date" />
           </div>
         </div>
 
@@ -286,7 +286,7 @@
         </div>
 
         <button
-          @click="updateById(mymusic.id,mymusic.musicname,mymusic.musicauthor,mymusic.status,mymusic.release_date,mymusic.comment)"
+          @click="updateById(mymusic.id,mymusic.name,mymusic.author,mymusic.status,mymusic.date,mymusic.comment)"
           class="btn btn-primary"
         >更新</button>
       </div>
@@ -308,8 +308,7 @@
       <button @click="findById()" class="btn btn-primary">Id查询</button>
     </div>
 
-    <br />
-    <br />
+  <div>
     <button @click="getmusic()" class="btn btn-primary" style="margin: 0 10px 0 0 ">查询所有</button>
     <button
       @click="AddForm = true;EditForm = false"
@@ -317,6 +316,8 @@
       style="margin: 0 10px 0 0 "
     >添加歌曲</button>
     <button class="btn btn-primary" @click="deleteMany()" >批量删除</button>
+  </div>
+  <br>
   </div>
   <!-- <span>传入的json数组的长度为:{{musics.length}}</span>  -->
 </template>
@@ -345,18 +346,18 @@ export default {
       //用来定义错误类型，方便输出
       errors: {
         id: "",
-        musicname: "",
-        musicauthor: "",
+        name: "",
+        author: "",
         status: "",
-        release_date: "",
+        date: "",
         comment: ""
       },
       mymusic: {
         id: 0,
-        musicname: "",
-        musicauthor: "",
+        name: "",
+        author: "",
         status: "",
-        release_date: "",
+        date: "",
         comment: "",
         file: ""
       },
@@ -372,40 +373,42 @@ export default {
     method1(data){//勾选复选框，获得他的id,判断id是否存在
     let id = data.id;
         if(data.status){
-            if(this.check.length == 0)
+            if(this.check.length == 0)//如果集合为空，直接添加入集合
                 this.check.push(id);
+            //查看是否存在重复的id
             let result = this.check.find((value)=>{
                 return Object.is(id, value)
             })
             if(!result){
-                this.check.push(id);
+                this.check.push(id);//如果不存在重复的id则添加到集合
             }
         }else{
             this.check = this.check.filter(function(item){
                 return item != id;
-            })
+            })//点击已勾选的则去除重复的id
         }
     },
     deleteMany(){
         Axios.delete("http://localhost:8080/musics/batch_delete/"+this.check)
-        .then();
-        this.getmusic;
-        this.check = [];
+        .then(
+            ()=>{
+                this.getmusic();
+            }
+        );
+        this.check = [];//删除完将数组置空
     },
     onSubmit() {
-      //字段验证
-      //   if(body.id == ''||body.id<=0){
-      //       this.errors = "";
-      //   }
       this.errors.id = ""; //错误信息清空
       this.errors.comment = "";
+      this.errors.author = "";
+      this.errors.date = "";
       let body = new FormData();
     //   body.append("id", this.mymusic.id);
-      body.append("musicname", this.mymusic.musicname);
-      body.append("musicauthor", this.mymusic.musicauthor);
+      body.append("name", this.mymusic.name);
+      body.append("author", this.mymusic.author);
       body.append("status", this.mymusic.status);
       body.append("comment", this.mymusic.comment);
-      body.append("release_date", this.mymusic.release_date);
+      body.append("date", this.mymusic.date);
       body.append("file", this.$refs.inputFile.files[0]);
 
       let header = {
@@ -416,16 +419,18 @@ export default {
 
       Axios.post("http://localhost:8080/musics", body, header)
         .then(
-          this.getmusic
+            ()=>{
+                this.getmusic();
+            }
           //   response =>
           //   {
           //     response.data = this.mymusic;
           //     this.musicList.push({
           //       id: this.mymusic.id,
-          //       musicname: this.mymusic.musicname,
-          //       musicauthor: this.mymusic.musicauthor,
+          //       name: this.mymusic.name,
+          //       author: this.mymusic.author,
           //       status: this.mymusic.status,
-          //       release_date: this.mymusic.release_date,
+          //       date: this.mymusic.date,
           //       comment: this.mymusic.comment,
           //       file: this.mymusic.file
           //     })
@@ -445,6 +450,15 @@ export default {
               if (element.field == "comment") {
                 this.errors.comment = element.defaultMessage;
               }
+              if(element.field == "date"){
+                  this.errors.date = element.defaultMessage;
+              }
+              if(element.field == "author"){
+                  this.errors.author = element.defaultMessage;
+              }
+              if(element.field == "status"){
+                  this.errors.status = element.defaultMessage;
+              }
             });
           } else {
             this.errors.id = "输入的ID号已存在";
@@ -453,10 +467,10 @@ export default {
       if (flag) {
         //没有出错则清空输入输出框
         this.mymusic.id = 0;
-        this.mymusic.musicname = "";
-        this.mymusic.musicauthor = "";
+        this.mymusic.name = "";
+        this.mymusic.author = "";
         this.mymusic.status = "";
-        this.mymusic.release_date = "";
+        this.mymusic.date = "";
         this.mymusic.comment = "";
       }
       // this.AddForm = false;
@@ -465,7 +479,7 @@ export default {
       Axios.get("http://localhost:8080/musics/type/" + this.searchtype).then(
         response => {
           if (response.data == null) {
-            window.console.log("输入的歌手不存在!");
+            console.log("输入的歌手不存在!");
           } else {
             this.musicList = response.data;
             this.searchtype = "";
@@ -487,50 +501,51 @@ export default {
     },
     remove(id) {
       Axios.delete(`http://localhost:8080/musics/${id}`).then(
-        this.getmusic
+          ()=>{
+               this.getmusic();
+          }
         //   this.musicList = this.musicList.filter()
       );
     },
-    updateById(id, name, author, status, release_date, comment) {
+    updateById(id, name, author, status, date, comment) {
       let body = new FormData();
-      body.append("id", id);
-      body.append("musicname", name);
-      body.append("musicauthor", author);
+    //   body.append("id", id);
+      body.append("name", name);
+      body.append("author", author);
       body.append("status", status);
-      body.append("release_date", release_date);
+      body.append("date", date);
       body.append("comment", comment);
       body.append("file", this.$refs.editFile.files[0]);
       let header = {
         "Content-Type": "application/form-data"
       };
       Axios.put(`http://localhost:8080/musics/${id}`, body, header).then(
-        this.getmusic,
-        (this.EditForm = false)
-        // () => {
-        //     this.musicList = this.musicList.map(
-        //         music => music.id == body.id ? body : music
-        //     );
-        //     (this.EditForm = false);
-        // }
+          (response) => {
+              let flag = response.data;
+              console.log("aaaaaaaaaaaaaaaaaaaaaa",flag);
+              this.getmusic();
+              this.EditForm = false;
+          }
       );
+      console.log("执行完了更新操作");
       this.mymusic.id = "";
-      this.mymusic.musicname = "";
-      this.mymusic.musicauthor = "";
+      this.mymusic.name = "";
+      this.mymusic.author = "";
       this.mymusic.status = "";
-      this.mymusic.release_date = "";
+      this.mymusic.date = "";
       this.mymusic.comment = "";
     },
-    setEditForm(id, musicname, musicauthor, status, release_date, comment) {
-      //点击更新然后再输入框显示未更新的内容
+    //点击更新然后再输入框显示未更新的内容
+    setEditForm(id, name, author, status, date, comment) {
       this.EditForm = !this.EditForm;
       if (this.AddForm) {
         this.AddForm = !this.AddForm;
       }
       this.mymusic.id = id;
-      this.mymusic.musicname = musicname;
-      this.mymusic.musicauthor = musicauthor;
+      this.mymusic.name = name;
+      this.mymusic.author = author;
       this.mymusic.status = status;
-      this.mymusic.release_date = release_date;
+      this.mymusic.date = date;
       this.mymusic.comment = comment;
     }
     // uploadSectionFile(param) {
