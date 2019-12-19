@@ -19,7 +19,7 @@
           </thead>
           <tbody>
             <!-- v-bind 根据id变化来更新 -->
-            <tr v-for="music in musicList" :key="music.id" >
+            <tr v-for="music in musicList" :key="music.id">
               <td>
                 <input type="checkbox" :value="music.id" v-model="check" />
                 <label>{{check}}</label>
@@ -44,6 +44,30 @@
           </tbody>
         </table>
       </center>
+      <nav aria-label="Page navigation example">
+        <ul class="list-group list-group-horizontal justify-content-center">
+          <li class="list-group-item">
+              <span aria-hidden="true" @click="getmusic(currentPage - 1)">&laquo;</span>
+          </li>
+          <li class="list-group-item" v-for="n in count" :key="n" @click="getmusic(n)">
+              {{n}}
+          </li>
+          <li class="list-group-item">
+              <span aria-hidden="true" @click="getmusic(currentPage + 1)">&raquo;</span>
+          </li>
+        </ul>
+        <!-- <ul class="pagination justify-content-center pagination-lg">
+          <li class="page-item">
+            <a href="#">&laquo;</a>
+          </li>
+          <li class="page-item">
+            <a href="#" v-for="n in count" :key="n">{{n}}</a>
+          </li>
+          <li class="page-item">
+            <a href="#">&raquo;</a>
+          </li>
+        </ul>-->
+      </nav>
       <div v-if="AddForm">
         <!-- <div class="form-group row">
           <label for="author" class="col-form-label col-sm-1">
@@ -65,7 +89,7 @@
             style="padding: 6px 0 0 10px; margin: 0;"
             v-if="errors.id != ''"
           >{{errors.id}}</div>
-        </div> -->
+        </div>-->
 
         <div class="form-group row">
           <!--  col-form-label -->
@@ -308,16 +332,16 @@
       <button @click="findById()" class="btn btn-primary">Id查询</button>
     </div>
 
-  <div>
-    <button @click="getmusic()" class="btn btn-primary" style="margin: 0 10px 0 0 ">查询所有</button>
-    <button
-      @click="AddForm = true;EditForm = false"
-      class="btn btn-primary"
-      style="margin: 0 10px 0 0 "
-    >添加歌曲</button>
-    <button class="btn btn-primary" @click="deleteMany()" >批量删除</button>
-  </div>
-  <br>
+    <div>
+      <button @click="getmusic(1)" class="btn btn-primary" style="margin: 0 10px 0 0 ">查询所有</button>
+      <button
+        @click="AddForm = true;EditForm = false"
+        class="btn btn-primary"
+        style="margin: 0 10px 0 0 "
+      >添加歌曲</button>
+      <button class="btn btn-primary" @click="deleteMany()">批量删除</button>
+    </div>
+    <br />
   </div>
   <!-- <span>传入的json数组的长度为:{{musics.length}}</span>  -->
 </template>
@@ -335,7 +359,22 @@ export default {
   },
   //页面加载之前就执行的操作
   created() {
-    this.getmusic();
+      Axios.get("http://localhost:8080/musics").then(
+        response => {
+            this.list_length = response.data.length;//获取总的数据个数
+            console.log(this.list_length);//15
+            this.pageNum = this.list_length/this.pageSize;//求余即应划分的总页数
+            console.log(this.pageNum);//3
+            if(this.list_length%this.pageSize != 0){//是否+1的判断
+                this.pageNum = this.pageNum + 1;
+            }
+            for(let i = 1; i <= this.pageNum; i++){//设置页码数
+                this.count.push(i);
+            }
+            this.getmusic(1);
+            }
+      ); 
+    // this.getmusic();
   },
   data() {
     return {
@@ -361,41 +400,43 @@ export default {
         comment: "",
         file: ""
       },
-      searchtype: ""
+      searchtype: "",
+      count: [],
+      currentPage: 0,
+      pageSize: 5,
+      list_length:0,
+      pageNum:0
     };
   },
   methods: {
-    getmusic() {
-      Axios.get("http://localhost:8080/musics").then(
-        response => (this.musicList = response.data)
-      ); //这里传入的是一个json数组
-    },
-    method1(data){//勾选复选框，获得他的id,判断id是否存在
-    let id = data.id;
-        if(data.status){
-            if(this.check.length == 0)//如果集合为空，直接添加入集合
-                this.check.push(id);
-            //查看是否存在重复的id
-            let result = this.check.find((value)=>{
-                return Object.is(id, value)
-            })
-            if(!result){
-                this.check.push(id);//如果不存在重复的id则添加到集合
-            }
+    //实现点击一下显示相应页面的信息
+    getmusic(n) {
+        if(n > this.pageNum){//越界判断
+            this.currentPage = this.pageNum;
         }else{
-            this.check = this.check.filter(function(item){
-                return item != id;
-            })//点击已勾选的则去除重复的id
-        }
-    },
-    deleteMany(){
-        Axios.delete("http://localhost:8080/musics/batch_delete/"+this.check)
-        .then(
-            ()=>{
-                this.getmusic();
+            if(n < 1){
+                this.currentPage = 1;
+            }else{
+                this.currentPage = n; //更新当前页
+                Axios.get(//可以做到在表格中显示相应的信息，问题？如何实现点击相应的页数显示相应的信息
+        "http://localhost:8080/musics/page/" +
+          this.currentPage +
+          "/" +
+          this.pageSize
+      ).then(response => {        
+        this.musicList = response.data.content;
+      });
             }
-        );
-        this.check = [];//删除完将数组置空
+        }
+        console.log(this.currentPage);
+    },
+    deleteMany() {
+      Axios.delete(
+        "http://localhost:8080/musics/batch_delete/" + this.check
+      ).then(() => {
+        this.getmusic(1);
+      });
+      this.check = []; //删除完将数组置空
     },
     onSubmit() {
       this.errors.id = ""; //错误信息清空
@@ -403,7 +444,7 @@ export default {
       this.errors.author = "";
       this.errors.date = "";
       let body = new FormData();
-    //   body.append("id", this.mymusic.id);
+      //   body.append("id", this.mymusic.id);
       body.append("name", this.mymusic.name);
       body.append("author", this.mymusic.author);
       body.append("status", this.mymusic.status);
@@ -419,9 +460,9 @@ export default {
 
       Axios.post("http://localhost:8080/musics", body, header)
         .then(
-            ()=>{
-                this.getmusic();
-            }
+          () => {
+            this.getmusic(1);
+          }
           //   response =>
           //   {
           //     response.data = this.mymusic;
@@ -450,14 +491,14 @@ export default {
               if (element.field == "comment") {
                 this.errors.comment = element.defaultMessage;
               }
-              if(element.field == "date"){
-                  this.errors.date = element.defaultMessage;
+              if (element.field == "date") {
+                this.errors.date = element.defaultMessage;
               }
-              if(element.field == "author"){
-                  this.errors.author = element.defaultMessage;
+              if (element.field == "author") {
+                this.errors.author = element.defaultMessage;
               }
-              if(element.field == "status"){
-                  this.errors.status = element.defaultMessage;
+              if (element.field == "status") {
+                this.errors.status = element.defaultMessage;
               }
             });
           } else {
@@ -501,15 +542,15 @@ export default {
     },
     remove(id) {
       Axios.delete(`http://localhost:8080/musics/${id}`).then(
-          ()=>{
-               this.getmusic();
-          }
+        () => {
+          this.getmusic(1);
+        }
         //   this.musicList = this.musicList.filter()
       );
     },
     updateById(id, name, author, status, date, comment) {
       let body = new FormData();
-    //   body.append("id", id);
+      //   body.append("id", id);
       body.append("name", name);
       body.append("author", author);
       body.append("status", status);
@@ -520,12 +561,12 @@ export default {
         "Content-Type": "application/form-data"
       };
       Axios.put(`http://localhost:8080/musics/${id}`, body, header).then(
-          (response) => {
-              let flag = response.data;
-              console.log("aaaaaaaaaaaaaaaaaaaaaa",flag);
-              this.getmusic();
-              this.EditForm = false;
-          }
+        response => {
+          let flag = response.data;
+          console.log("aaaaaaaaaaaaaaaaaaaaaa", flag);
+          this.getmusic(1);
+          this.EditForm = false;
+        }
       );
       console.log("执行完了更新操作");
       this.mymusic.id = "";
