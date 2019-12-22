@@ -361,20 +361,19 @@ export default {
   created() {
       Axios.get("http://localhost:8080/musics").then(
         response => {
-            this.list_length = response.data.length;//获取总的数据个数
+            // response.data只是表示获取响应体data.后面的才表示各个项的内容
+            this.list_length = response.data.data.length;//获取总的数据个数
             console.log(this.list_length);//15
-            this.pageNum = this.list_length/this.pageSize;//求余即应划分的总页数
+            this.pageNum = Math.ceil(this.list_length/this.pageSize);//向上取整求总页数
             console.log(this.pageNum);//3
-            if(this.list_length%this.pageSize != 0){//是否+1的判断
-                this.pageNum = this.pageNum + 1;
-            }
             for(let i = 1; i <= this.pageNum; i++){//设置页码数
                 this.count.push(i);
             }
             this.getmusic(1);
             }
-      ); 
-    // this.getmusic();
+      );
+      this.num += 1;
+      console.log("create执行次数为"+this.num);
   },
   data() {
     return {
@@ -402,10 +401,11 @@ export default {
       },
       searchtype: "",
       count: [],
-      currentPage: 0,
+      currentPage: 0,//当前页
       pageSize: 5,
       list_length:0,
-      pageNum:0
+      pageNum:0,//总页数
+      num:0
     };
   },
   methods: {
@@ -424,7 +424,7 @@ export default {
           "/" +
           this.pageSize
       ).then(response => {        
-        this.musicList = response.data.content;
+        this.musicList = response.data.data.content;
       });
             }
         }
@@ -433,8 +433,14 @@ export default {
     deleteMany() {
       Axios.delete(
         "http://localhost:8080/musics/batch_delete/" + this.check
-      ).then(() => {
-        this.getmusic(1);
+      ).then(
+          (response) => {
+            if(response.data.isok){
+                this.getmusic(this.currentPage);
+                alert("批量删除成功")
+            }else{
+                alert(response.data.message);
+            }
       });
       this.check = []; //删除完将数组置空
     },
@@ -463,47 +469,37 @@ export default {
           () => {
             this.getmusic(1);
           }
-          //   response =>
-          //   {
-          //     response.data = this.mymusic;
-          //     this.musicList.push({
-          //       id: this.mymusic.id,
-          //       name: this.mymusic.name,
-          //       author: this.mymusic.author,
-          //       status: this.mymusic.status,
-          //       date: this.mymusic.date,
-          //       comment: this.mymusic.comment,
-          //       file: this.mymusic.file
-          //     })
-          //   }
-          //   this.musicList.push(body),
         )
         .catch(error => {
           flag = true; //报错了不需要清空输入框
-          let messages = error.response.data;
-          window.console.log(messages);
+          let messages = error.response.data.split(',');
+          let field = messages[0];
+          let defaultMessage = messages[1]; 
+          console.log(field+defaultMessage);
           //   写成一个通用的错误信息提取的库
           if (messages) {
-            messages.forEach(element => {
-              if (element.field == "id") {
-                this.errors.id = element.defaultMessage;
+              if (field == "id") {
+                this.errors.id = defaultMessage;
               }
-              if (element.field == "comment") {
-                this.errors.comment = element.defaultMessage;
+              if(field == "name"){
+                  this.errors.name = defaultMessage;
               }
-              if (element.field == "date") {
-                this.errors.date = element.defaultMessage;
+              if (field == "comment") {
+                this.errors.comment = defaultMessage;
               }
-              if (element.field == "author") {
-                this.errors.author = element.defaultMessage;
+              if (field == "date") {
+                this.errors.date = defaultMessage;
               }
-              if (element.field == "status") {
-                this.errors.status = element.defaultMessage;
+              if (field == "author") {
+                this.errors.author = defaultMessage;
               }
-            });
-          } else {
-            this.errors.id = "输入的ID号已存在";
-          }
+              if (field == "status") {
+                this.errors.status = defaultMessage;
+              }
+            }
+            else {
+                this.errors.id = "输入的ID号已存在";
+            }
         });
       if (flag) {
         //没有出错则清空输入输出框
@@ -519,31 +515,41 @@ export default {
     findByType() {
       Axios.get("http://localhost:8080/musics/type/" + this.searchtype).then(
         response => {
-          if (response.data == null) {
-            console.log("输入的歌手不存在!");
-          } else {
-            this.musicList = response.data;
-            this.searchtype = "";
-          }
+            if(response.data.isok){
+                this.musicList = response.data.data;
+            }else{
+                alert(response.data.message);
+            }
+        //   if (response.data == null) {
+        //     console.log("输入的歌手不存在!");
+        //   } else {
+        //     this.musicList = response.data;
+        //     this.searchtype = "";
+        //   }
         }
       );
     },
     findById() {
       Axios.get("http://localhost:8080/musics/" + this.searchtype).then(
         response => {
-          if (response.data == null) {
-            window.console.log("输入的ID不存在!");
-          } else {
-            this.musicList = response.data;
+          if (response.data.isok) {
+            this.musicList = response.data.dat;
             this.searchtype = "";
+          } else {
+            alert(response.data.message);  
           }
         }
       );
     },
     remove(id) {
       Axios.delete(`http://localhost:8080/musics/${id}`).then(
-        () => {
-          this.getmusic(1);
+        (response) => {
+            if(response.data.isok){
+                this.getmusic(this.currentPage);
+                alert("删除成功！")
+            }else{
+                alert(response.data.message);
+            }    
         }
         //   this.musicList = this.musicList.filter()
       );
@@ -562,10 +568,11 @@ export default {
       };
       Axios.put(`http://localhost:8080/musics/${id}`, body, header).then(
         response => {
-          let flag = response.data;
-          console.log("aaaaaaaaaaaaaaaaaaaaaa", flag);
-          this.getmusic(1);
-          this.EditForm = false;
+          if(!response.data.isok){
+              alert(response.data.message);             
+          }
+           this.getmusic(this.currentPage);
+           this.EditForm = false;
         }
       );
       console.log("执行完了更新操作");

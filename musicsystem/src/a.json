@@ -1,7 +1,169 @@
 {
-    "timestamp": "2019-12-13T03:40:14.595+0000",
-    "status": 500,
-    "error": "Internal Server Error",
-    "message": "Validation failed for classes [com.wxh.musicsystem.domain.Music] during persist time for groups [javax.validation.groups.Default, ]\nList of constraint violations:[\n\tConstraintViolationImpl{interpolatedMessage='个数必须在5和30之间', propertyPath=comment, rootBeanClass=class com.wxh.musicsystem.domain.Music, messageTemplate='{javax.validation.constraints.Size.message}'}\n]",
-    "path": "/musics"
+    "isok": true,
+    "code": 200,
+    "message": "success",
+    "data": [
+        {
+            "id": 1,
+            "name": "那个男人",
+            "author": "杨宗纬",
+            "status": false,
+            "comment": "一首好听的歌8494",
+            "date": "2019-10-27",
+            "file": "ab.txt"
+        },
+        {
+            "id": 2,
+            "name": "华夏",
+            "author": "GAI周延",
+            "status": false,
+            "comment": "真的好听",
+            "date": "2019-10-29",
+            "file": "a.txt"
+        },
+        {
+            "id": 3,
+            "name": "好心分手",
+            "author": "卢巧音",
+            "status": true,
+            "comment": "好心一早放开我",
+            "date": "2019-12-13",
+            "file": "undefined"
+        },
+        {
+            "id": 4,
+            "name": "Hey Hong",
+            "author": "刘聪KEY.L",
+            "status": false,
+            "comment": "他望着窗外的风景",
+            "date": "2019-10-29",
+            "file": null
+        },
+        {
+            "id": 5,
+            "name": "差不多先生",
+            "author": "热狗",
+            "status": true,
+            "comment": "我是差不多先生",
+            "date": "2019-12-12",
+            "file": "undefined"
+        },
+        {
+            "id": 6,
+            "name": "画",
+            "author": "邓紫棋",
+            "status": false,
+            "comment": "真的好听",
+            "date": "2019-10-29",
+            "file": null
+        },
+        {
+            "id": 7,
+            "name": "千千阙歌",
+            "author": "陈慧娴",
+            "status": false,
+            "comment": "真的好听",
+            "date": "2019-10-27",
+            "file": null
+        },
+        {
+            "id": 8,
+            "name": "吻别",
+            "author": "张学友",
+            "status": false,
+            "comment": "真的好听",
+            "date": "2019-10-27",
+            "file": null
+        },
+        {
+            "id": 9,
+            "name": "多想在平庸的生活拥抱你",
+            "author": "隔壁老樊",
+            "status": false,
+            "comment": "真的好听",
+            "date": "2019-10-27",
+            "file": null
+        },
+        {
+            "id": 10,
+            "name": "井底之蛙",
+            "author": "功夫胖",
+            "status": false,
+            "comment": "真的好听",
+            "date": "2019-10-29",
+            "file": null
+        },
+        {
+            "id": 11,
+            "name": "山丘",
+            "author": "李宗盛",
+            "status": false,
+            "comment": "越过山丘才发现无人等候",
+            "date": "2019-12-11",
+            "file": "undefined"
+        },
+        {
+            "id": 12,
+            "name": "年少有为",
+            "author": "李荣浩",
+            "status": false,
+            "comment": "年少有为好过碌碌无为",
+            "date": "2019-11-01",
+            "file": "undefined"
+        },
+        {
+            "id": 13,
+            "name": "泡沫",
+            "author": "邓紫棋",
+            "status": true,
+            "comment": "全都是泡沫",
+            "date": "2019-12-05",
+            "file": "undefined"
+        },
+        {
+            "id": 14,
+            "name": "火锅底料",
+            "author": "GAI周延",
+            "status": false,
+            "comment": "老子吃火锅你吃火锅底料",
+            "date": "2019-12-06",
+            "file": null
+        },
+        {
+            "id": 15,
+            "name": "冷雨夜11",
+            "author": "刘德华",
+            "status": true,
+            "comment": "冷雨夜我不想回家",
+            "date": "2019-12-10",
+            "file": "undefined"
+        },
+        {
+            "id": 64,
+            "name": "test",
+            "author": "author",
+            "status": false,
+            "comment": "这是个测试用例",
+            "date": "2019-12-18",
+            "file": "11.txt"
+        },
+        {
+            "id": 65,
+            "name": "test2",
+            "author": "author2",
+            "status": true,
+            "comment": "这是测试用例2",
+            "date": "2019-12-21",
+            "file": "music.sql"
+        },
+        {
+            "id": 66,
+            "name": "",
+            "author": "22252",
+            "status": false,
+            "comment": "222222",
+            "date": "2019-11-28",
+            "file": "undefined"
+        }
+    ]
 }
