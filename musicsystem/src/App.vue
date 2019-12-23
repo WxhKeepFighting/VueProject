@@ -1,7 +1,6 @@
 <template>
   <!-- bootstrap响应式布局grid -->
   <div id="app" class="container">
-    <Login></Login>
     <h1 style="text-align:center">音乐管理系统</h1>
     <div class="form-group">
       <center>
@@ -348,13 +347,13 @@
 
 <script>
 import Axios from "axios";
-import Login from "./components/Login";
+// import Login from "./components/Login";
 // import HelloWorld from "./components/HelloWorld"
 //也是json格式
 export default {
   name: "App", //将vue命名为App
   components: {
-    Login
+    // Login
     // HelloWorld
   },
   //页面加载之前就执行的操作
@@ -466,8 +465,15 @@ export default {
 
       Axios.post("http://localhost:8080/musics", body, header)
         .then(
-          () => {
-            this.getmusic(1);
+          (response) => {
+              if(response.data == "success"){
+                  this.getmusic(this.pageNum);
+                  alert("添加成功");
+                  this.AddForm = false;
+              }else{
+                  alert("添加失败");
+              }
+            
           }
         )
         .catch(error => {
@@ -510,7 +516,6 @@ export default {
         this.mymusic.date = "";
         this.mymusic.comment = "";
       }
-      // this.AddForm = false;
     },
     findByType() {
       Axios.get("http://localhost:8080/musics/type/" + this.searchtype).then(
@@ -533,7 +538,7 @@ export default {
       Axios.get("http://localhost:8080/musics/" + this.searchtype).then(
         response => {
           if (response.data.isok) {
-            this.musicList = response.data.dat;
+            this.musicList = response.data.data;
             this.searchtype = "";
           } else {
             alert(response.data.message);  
@@ -569,9 +574,10 @@ export default {
       Axios.put(`http://localhost:8080/musics/${id}`, body, header).then(
         response => {
           if(!response.data.isok){
-              alert(response.data.message);             
+              alert("更新失败"+response.data.message);             
           }
            this.getmusic(this.currentPage);
+           alert("更新成功!");
            this.EditForm = false;
         }
       );
