@@ -17,19 +17,32 @@
     </el-row>
     <el-row>
       <el-col :span="8">
-        <el-button id="login" v-on:click="check" style="width:100%" type="primary"><router-link to="/app">登录</router-link></el-button>
+        <el-button id="login" v-on:click="check" style="width:100%" type="primary">登录验证</el-button>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
   name: "Login",
   data(){
       return{
-      a:true
+          name:"",
+          password:""
       };
+  },
+  methods:{
+      check(){
+          Axios.get("http://localhost:8080/Login/"+this.name+"/"+this.password)
+          .then(
+            ()=>{
+              
+            }
+          );
+          this.$router.push({name:'Main',params:{username:this.username}});
+      }
   }
 };
 </script>

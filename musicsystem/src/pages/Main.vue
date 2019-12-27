@@ -1,6 +1,7 @@
 <template>
   <!-- bootstrap响应式布局grid -->
-  <div id="app" class="container">
+  <div id="main" class="container">
+      <router-view></router-view>
     <h1 style="text-align:center">音乐管理系统</h1>
     <div class="form-group">
       <center>
@@ -352,6 +353,10 @@ import Axios from "axios";
 //也是json格式
 export default {
   name: "App", //将vue命名为App
+  mounted:function(){
+      this.username = this.$route.params.username;
+      alert(this.username);
+  },
   components: {
     // Login
     // HelloWorld
@@ -376,6 +381,7 @@ export default {
   },
   data() {
     return {
+      username:"",
       EditForm: false,
       AddForm: false,
       check: [],
@@ -625,7 +631,7 @@ export default {
 </script>
 
 <style>
-#app table {
+#main table {
   margin-top: 80px;
   /* margin: auto; */
 }
